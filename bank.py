@@ -1,5 +1,7 @@
 from datetime import datetime as dt
 
+from formaters import currency_formater, date_formater
+
 menu = """
 ********* Welcome Python Bank System *********
 
@@ -20,14 +22,6 @@ OPERATIONS_REPORT = {
     "account_balance": "Account Balance"
 }
 
-
-def currency_formater(val):
-    return f"$ {val:.2f}"
-
-
-def date_formater():
-    date_time = dt.today()
-    return f"{date_time.month}/{date_time.day}/{date_time.year} {date_time.hour}:{date_time.minute}:{date_time.second}"
 
 
 def record_operations(type_operation, val, time):
