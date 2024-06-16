@@ -1,5 +1,9 @@
+from datetime import datetime as dt
+
+
 def currency_formater(val):
     return f"$ {val:.2f}"
+
 
 def date_formater():
     date_time = dt.today()
