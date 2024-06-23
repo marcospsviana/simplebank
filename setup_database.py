@@ -1,7 +1,14 @@
 import sqlite3
+from sqlmodel import SQLModel, create_engine
 
 database_con = sqlite3.connect("bank.db")
 cursor = database_con.cursor()
+
+
+class DB:
+    def __init__(self) -> None:
+        self.engine = create_engine("sqlite:///bank.db", echo=True)
+        SQLModel.metadata.create_all(self.engine)
 
 
 def setup_db_tables():
