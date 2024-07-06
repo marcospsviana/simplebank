@@ -1,5 +1,5 @@
 setup:
-	python setup_database.py
+	python models.models.py
 
 formater:
 	black .
