@@ -6,12 +6,16 @@ name = "pypi"
 [packages]
 sqlalchemy = "*"
 sqlmodel = "*"
+psycopg2-binary = "*"
+psycopg = {extras = ["pool", "binary"], version = "*"}
 
 [dev-packages]
 black = "*"
 flake8 = "*"
 pytest = "*"
 model-bakery = "*"
+pytest-freezegun = "*"
+pytest-postgresql = "*"
 
 [requires]
 python_version = "3.10"
