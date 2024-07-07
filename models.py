@@ -1,10 +1,11 @@
-from typing import Any, Dict, Optional, Tuple
-from enum import Enum
 from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Dict, Optional, Tuple
+
 from sqlmodel import Field, SQLModel, create_engine, select
 
+
 def get_engine():
-    # engine = create_engine("sqlite:///bank.db", echo=True)
     engine = create_engine(
     "postgresql://postgres:postgres@localhost/postgres",
     isolation_level = "REPEATABLE READ"

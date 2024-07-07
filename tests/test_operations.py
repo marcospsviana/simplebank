@@ -1,10 +1,11 @@
+from decimal import Context, Decimal
+
 import pytest
-from decimal import Decimal, Context
-from operations import do_deposit
-from database_operations import BaseOps
-from models import Account, User
 from sqlmodel import Session, select
 
+from database_operations import BaseOps
+from models import Account, User
+from operations import do_deposit
 
 
 def test_deposit(session, user, account):

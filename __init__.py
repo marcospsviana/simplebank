@@ -5,4 +5,4 @@ import sys
 from pathlib import Path
 
 sys.path.append(Path('modelsbase'))
-from models import User, Account, Address
+from models import Account, Address, User

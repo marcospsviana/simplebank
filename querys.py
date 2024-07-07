@@ -1,5 +1,6 @@
 from psycopg2 import connect
 
+
 class QueryUser:
     def __init__(self) -> None:
         self.conn = connect("postgresql://postgres:postgres@localhost/postgres")

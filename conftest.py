@@ -1,15 +1,15 @@
-import pytest
-import freezegun
-from datetime import datetime
 import sqlite3
-from sqlmodel import SQLModel, create_engine, Session, select
-from models import User, Account, TypeAccount
-from pytest_postgresql import factories
+from datetime import datetime
+
+import freezegun
 import psycopg2
-from database_operations import BaseOps
-
-
+import pytest
+from pytest_postgresql import factories
 from pytest_postgresql.janitor import DatabaseJanitor
+from sqlmodel import Session, SQLModel, create_engine, select
+
+from database_operations import BaseOps
+from models import Account, TypeAccount, User
 
 # @pytest.fixture
 # def database(postgresql_proc):

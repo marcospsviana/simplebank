@@ -1,10 +1,11 @@
-from models import User, Account, Address, get_engine
-from sqlmodel import Session, select, update, insert, exists
-from sqlalchemy.exc import IntegrityError
-from uuid import uuid4
 from datetime import datetime
-from psycopg2 import connect
+from uuid import uuid4
 
+from psycopg2 import connect
+from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, exists, insert, select, update
+
+from models import Account, Address, User, get_engine
 
 
 class BaseOps:
@@ -17,13 +18,9 @@ class BaseOps:
 
 
     def create_new_register_user(self, name, citzen_id):
-        # statement = select(User).where(User.name == name)
-        # result = self.session.exec(statement)
-        try:
-            self.session.add(User(name=name, citzen_id=citzen_id))
-            self.session.commit()
-        except:
-            ...
+        self.session.add(User(name=name, citzen_id=citzen_id))
+        self.session.commit()
+        
         
         
     def get_user(self, name):
