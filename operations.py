@@ -1,6 +1,9 @@
-from models import User, Account
-from decimal import Decimal, Context
+from decimal import Context, Decimal
+
 from database_operations import OperationsAccount
+from models import Account, User
+
+
 def do_withdrawal(value): ...
 
 

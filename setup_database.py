@@ -1,7 +1,7 @@
 import sqlite3
-from sqlmodel import SQLModel, create_engine
-from psycopg2 import connect, sql
 
+from psycopg2 import connect, sql
+from sqlmodel import SQLModel, create_engine
 
 database_con = sqlite3.connect("bank.db")
 cursor = database_con.cursor()

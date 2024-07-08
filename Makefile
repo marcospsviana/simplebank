@@ -3,6 +3,7 @@ setup:
 
 formater:
 	black .
+	isort .
 
 check:
 	flake8 .
