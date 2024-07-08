@@ -7,10 +7,11 @@ from sqlmodel import Field, SQLModel, create_engine, select
 
 def get_engine():
     engine = create_engine(
-    "postgresql://postgres:postgres@localhost/postgres",
-    isolation_level = "REPEATABLE READ"
-)
+        "postgresql://postgres:postgres@localhost/postgres",
+        isolation_level="REPEATABLE READ",
+    )
     return engine
+
 
 class TypeAccount(Enum):
     BASIC_ACCOUNT = "basic"
@@ -18,7 +19,9 @@ class TypeAccount(Enum):
 
 
 class User(SQLModel, table=True):
-    id: int | None  = Field(default=None, primary_key=True, unique=True, unique_items=True)
+    id: int | None = Field(
+        default=None, primary_key=True, unique=True, unique_items=True
+    )
     name: str
     citzen_id: str = Field(unique=True, unique_items=True)
 
@@ -26,7 +29,7 @@ class User(SQLModel, table=True):
 class Account(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True, unique=True)
     account_number: str = Field(unique=True)
-    account_user: int = Field(foreign_key="user.id")
+    account_user: int = Field(foreign_key="user.id", unique_items=True)
     type: TypeAccount = Field(default=TypeAccount.BASIC_ACCOUNT)
     created_date: datetime = Field(default=datetime.now(timezone.utc), nullable=False)
     balance: float = Field(default=0)
