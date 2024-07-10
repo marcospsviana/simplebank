@@ -2,11 +2,9 @@ from datetime import datetime
 from uuid import uuid4
 
 from psycopg2 import connect
-from sqlalchemy.exc import IntegrityError
-from sqlmodel import Session, exists, insert, select, update
-from psycopg2.errors import UniqueViolation
+from sqlmodel import Session, select
 
-from models import Account, Address, User, get_engine
+from models import Account, User, get_engine
 
 
 class BaseOps:
@@ -52,7 +50,7 @@ class BaseOps:
         results = self.session.exec(account_statement)
         account_found = results.first()
         if account_found:
-            return f"Account for this costumer already exists, account number; {account_found.account_number}"
+            return f"Account for this costumer already exists, account number: {account_found.account_number}"
         else:
             id_user = user.id
             account_user = int(id_user)
@@ -70,7 +68,6 @@ class BaseOps:
             self.session.add(account)
             self.session.commit()
             return f"Account {account_number} created successful!"
-        
 
     def get_account(self, user):
         statement = select(Account).where(User.id == user)
@@ -93,7 +90,6 @@ class OperationsAccount:
         self.session.add(account)
         self.session.commit()
         self.session.flush(account)
-
 
     def withdrawal(self, account, value):
         statement = select(Account).where(Account.account_number == account)

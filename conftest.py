@@ -1,12 +1,5 @@
-import sqlite3
-from datetime import datetime
-
-import freezegun
-import psycopg2
 import pytest
-from pytest_postgresql import factories
-from pytest_postgresql.janitor import DatabaseJanitor
-from sqlmodel import Session, SQLModel, create_engine, select
+from sqlmodel import Session, create_engine, select
 
 from database_operations import BaseOps
 from models import Account, TypeAccount, User
@@ -34,12 +27,18 @@ def user(session):
 
 
 @pytest.fixture
-def account(user, freezer, session):
+def account(user, session):
     base_ops = BaseOps()
     base_ops.create_new_register_account(
         account_user=user.name, type=TypeAccount.BASIC_ACCOUNT, balance=0
     )
-    # session.commit()
+    session.flush(Account)
+    statement = select(Account).where(Account.account_user == user.id)
+    results = session.exec(statement)
+    account = results.one()
+    account.account_number = "296318745086616949474749325034555106571"
+    session.add(account)
+    session.commit()
     session.flush(Account)
     statement = select(Account).where(Account.account_user == user.id)
     results = session.exec(statement)
