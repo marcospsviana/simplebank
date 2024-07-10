@@ -21,5 +21,5 @@ def test_unique_account_per_user():
     result = base_ops.create_new_register_account(account_user="test-name")
     assert (
         result
-        == f"Account for this costumer already exists, account number: 296318745086616949474749325034555106571"
+        == "Account for this costumer already exists, account number: 296318745086616949474749325034555106571"
     )
