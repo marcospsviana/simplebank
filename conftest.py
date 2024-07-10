@@ -37,5 +37,12 @@ def account(user, freezer, session):
     statement = select(Account).where(Account.account_user == user.id)
     results = session.exec(statement)
     account = results.one()
+    account.account_number = "296318745086616949474749325034555106571"
+    session.add(account)
+    session.commit()
+    session.flush(Account)
+    statement = select(Account).where(Account.account_user == user.id)
+    results = session.exec(statement)
+    account = results.one()
     yield account
     session.delete(account)

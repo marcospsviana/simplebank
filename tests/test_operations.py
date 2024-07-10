@@ -9,17 +9,17 @@ def test_deposit(session, user, account):
     assert account_user.balance == 1200.0
 
 
-def test_withdrawal(session, user, account):
-    do_withdrawal(600, account=account.account_number)
+def test_withdrawal(user):
+    do_withdrawal(600, account="296318745086616949474749325034555106571")
     base_ops = BaseOps()
     account_user = base_ops.get_account(user.id)
     assert account_user.balance == 600.0
 
 
-def test_unique_account_per_user(session, user, account):
+def test_unique_account_per_user():
     base_ops = BaseOps()
-    result = base_ops.create_new_register_account(account_user=user.name)
+    result = base_ops.create_new_register_account(account_user="test-name")
     assert (
         result
-        == f"Account for this costumer already exists, account number; {account.account_number}"
+        == f"Account for this costumer already exists, account number: 296318745086616949474749325034555106571"
     )

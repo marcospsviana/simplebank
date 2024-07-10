@@ -50,7 +50,7 @@ class BaseOps:
         results = self.session.exec(account_statement)
         account_found = results.first()
         if account_found:
-            return f"Account for this costumer already exists, account number; {account_found.account_number}"
+            return f"Account for this costumer already exists, account number: {account_found.account_number}"
         else:
             id_user = user.id
             account_user = int(id_user)
