@@ -1,12 +1,5 @@
-import sqlite3
-from datetime import datetime
-
-import freezegun
-import psycopg2
 import pytest
-from pytest_postgresql import factories
-from pytest_postgresql.janitor import DatabaseJanitor
-from sqlmodel import Session, SQLModel, create_engine, select
+from sqlmodel import Session, create_engine, select
 
 from database_operations import BaseOps
 from models import Account, TypeAccount, User

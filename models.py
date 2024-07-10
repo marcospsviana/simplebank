@@ -1,8 +1,7 @@
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, Optional, Tuple
 
-from sqlmodel import Field, SQLModel, create_engine, select
+from sqlmodel import Field, SQLModel, create_engine
 
 
 def get_engine():
