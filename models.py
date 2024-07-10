@@ -4,7 +4,6 @@ from enum import Enum
 from sqlmodel import Field, SQLModel, create_engine
 
 
-
 def get_engine():
     engine = create_engine(
         "postgresql://postgres:postgres@localhost/postgres",
