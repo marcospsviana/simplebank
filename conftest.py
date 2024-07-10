@@ -27,12 +27,11 @@ def user(session):
 
 
 @pytest.fixture
-def account(user, freezer, session):
+def account(user, session):
     base_ops = BaseOps()
     base_ops.create_new_register_account(
         account_user=user.name, type=TypeAccount.BASIC_ACCOUNT, balance=0
     )
-    # session.commit()
     session.flush(Account)
     statement = select(Account).where(Account.account_user == user.id)
     results = session.exec(statement)
