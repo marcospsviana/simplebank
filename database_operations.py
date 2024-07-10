@@ -76,6 +76,7 @@ class BaseOps:
         statement = select(Account).where(User.id == user)
         results = self.session.exec(statement)
         account = results.one()
+        self.session.flush(account)
         return account
 
 
@@ -89,6 +90,16 @@ class OperationsAccount:
         results = self.session.exec(statement)
         account = results.one()
         account.balance += value
+        self.session.add(account)
+        self.session.commit()
+        self.session.flush(account)
+
+
+    def withdrawal(self, account, value):
+        statement = select(Account).where(Account.account_number == account)
+        results = self.session.exec(statement)
+        account = results.one()
+        account.balance -= value
         self.session.add(account)
         self.session.commit()
         self.session.flush(account)
