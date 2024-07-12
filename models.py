@@ -37,12 +37,13 @@ class Account(SQLModel, table=True):
         return f"{self.account_number}"
 
 
-class Address(SQLModel, table=True):
+class Extract(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True, unique=True)
-    user: int = Field(foreign_key="user.id", nullable=False)
-    address_number: str = Field(nullable=False)
-    city: str = Field(nullable=False)
-    state: str = Field(nullable=False, max_length=3)
+    account: int = Field(foreign_key="account.id", nullable=False)
+    extract_number: str = Field(nullable=False)
+    type_operation: str = Field(nullable=False)
+    date_operation: datetime = Field(default=datetime.now(timezone.utc), nullable=False)
+    value_operation: float = Field(nullable=False)
 
 
 if __name__ == "__main__":

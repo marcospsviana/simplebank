@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from psycopg2 import connect
 from sqlmodel import Session, select
 
-from models import Account, User, get_engine
+from models import Account, Extract, User, get_engine
 
 
 class BaseOps:
@@ -90,6 +90,7 @@ class OperationsAccount:
         self.session.add(account)
         self.session.commit()
         self.session.flush(account)
+        self.do_record_extract(account, value, "deposit")
 
     def withdrawal(self, account, value):
         statement = select(Account).where(Account.account_number == account)
@@ -99,8 +100,31 @@ class OperationsAccount:
         self.session.add(account)
         self.session.commit()
         self.session.flush(account)
+        self.do_record_extract(account, value, "withdrawal")
+
+    def get_extract(self, account):
+        statement = select(Extract).where(Account.account_number == account)
+        results = self.session.exec(statement)
+        extract = results.all()
+        return extract
+
+    def do_record_extract(self, account, value, type_operation):
+        extract = Extract(
+            id=None,
+            extract_number=generate_extract_number(account.account_number),
+            account=account.id,
+            value_operation=value,
+            type_operation=type_operation,
+            date_operation=datetime.now(timezone.utc),
+        )
+        self.session.add(extract)
+        self.session.commit()
 
 
 def generate_account_number():
     number = uuid4()
     return number.int
+
+
+def generate_extract_number(account):
+    return int(account) + uuid4().int
