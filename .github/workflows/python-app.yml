@@ -101,7 +101,7 @@ jobs:
       run: poetry run python models.py
     - name: Test with pytest
       run: |
-        poetry run pytest -v
+        poetry run pytest -v --cov=simplebank tests/
     env:
       # The hostname used to communicate with the PostgreSQL service container
       POSTGRES_HOST: postgres

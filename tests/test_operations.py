@@ -1,4 +1,4 @@
-from database_operations import BaseOps
+from database_operations import BaseOps, OperationsAccount
 from operations import do_deposit, do_withdrawal
 
 
@@ -23,3 +23,9 @@ def test_unique_account_per_user():
         result
         == "Account for this costumer already exists, account number: 296318745086616949474749325034555106571"
     )
+
+
+def test_record_extract():
+    operation = OperationsAccount()
+    result = operation.get_extract("296318745086616949474749325034555106571")
+    assert len(result) == 2
