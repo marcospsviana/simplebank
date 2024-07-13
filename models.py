@@ -46,6 +46,15 @@ class Extract(SQLModel, table=True):
     value_operation: float = Field(nullable=False)
 
 
+class LimitWithDrawal(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True, unique=True)
+    account: int = Field(foreign_key="account.id", nullable=False)
+    withdrawal_day_limit: int = Field(default=0)
+    date_withdrawal: datetime = Field(
+        default=datetime.now(timezone.utc), nullable=False
+    )
+
+
 if __name__ == "__main__":
     engine = get_engine()
     SQLModel.metadata.create_all(engine)
