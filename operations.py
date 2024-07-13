@@ -9,7 +9,8 @@ def do_withdrawal(value, account):
 
 
 def do_deposit(value, account):
-    operations.deposit(account, value=value)
+    result = operations.deposit(account, value=value)
+    return result
 
 
 def get_extract(account):

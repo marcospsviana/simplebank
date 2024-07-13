@@ -100,6 +100,8 @@ class OperationsAccount:
         self.session = Session(self.engine)
 
     def deposit(self, account, value):
+        if float(value) < 0:
+            return f"This value $ {value} is not allowed!"
         statement = select(Account).where(Account.account_number == account)
         results = self.session.exec(statement)
         account = results.one()
