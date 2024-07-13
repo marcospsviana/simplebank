@@ -4,7 +4,16 @@ from uuid import uuid4
 from psycopg2 import connect
 from sqlmodel import Session, select
 
-from models import Account, Extract, User, get_engine
+from models import Account, Extract, LimitWithDrawal, User, get_engine
+
+
+def generate_account_number():
+    number = uuid4()
+    return number.int
+
+
+def generate_extract_number(account):
+    return int(account) + uuid4().int
 
 
 class BaseOps:
@@ -67,6 +76,14 @@ class BaseOps:
             )
             self.session.add(account)
             self.session.commit()
+            withdrawal_limit = LimitWithDrawal(
+                id=None,
+                account=account.id,
+                withdrawal_day_limit=0,
+                date_withdrawal=datetime.now(timezone.utc),
+            )
+            self.session.add(withdrawal_limit)
+            self.session.commit()
             return f"Account {account_number} created successful!"
 
     def get_account(self, user):
@@ -95,12 +112,26 @@ class OperationsAccount:
     def withdrawal(self, account, value):
         statement = select(Account).where(Account.account_number == account)
         results = self.session.exec(statement)
-        account = results.one()
-        account.balance -= value
+        account = results.first()
+        if value > account.balance:
+            return f"Account doesn't have enough to withdrawal $ {float(value)}, account balance: $ {account.balance}"
+        else:
+            limit_count_statement = select(LimitWithDrawal).where(
+                LimitWithDrawal.account == account.id
+            )
+            result_count = self.session.exec(limit_count_statement)
+            count = result_count.first()
+            if count.withdrawal_day_limit == 3:
+                return "You already have made three withdrawals today this is the limit daily!"
+            account.balance -= value
+            self.session.add(account)
+            count.withdrawal_day_limit += 1
+            self.session.add(count)
         self.session.add(account)
         self.session.commit()
         self.session.flush(account)
         self.do_record_extract(account, value, "withdrawal")
+        return f"Withdrawal of value $ {float(value)} successful!"
 
     def get_extract(self, account):
         statement = select(Extract).where(Account.account_number == account)
@@ -119,12 +150,3 @@ class OperationsAccount:
         )
         self.session.add(extract)
         self.session.commit()
-
-
-def generate_account_number():
-    number = uuid4()
-    return number.int
-
-
-def generate_extract_number(account):
-    return int(account) + uuid4().int

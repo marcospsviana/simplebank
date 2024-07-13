@@ -4,7 +4,8 @@ operations = OperationsAccount()
 
 
 def do_withdrawal(value, account):
-    operations.withdrawal(account, value=value)
+    result = operations.withdrawal(account, value=value)
+    return result
 
 
 def do_deposit(value, account):
