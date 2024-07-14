@@ -118,11 +118,16 @@ class OperationsAccount:
         if value > account.balance:
             return f"Account doesn't have enough to withdrawal $ {float(value)}, account balance: $ {account.balance}"
         else:
+            current_date = datetime.now(timezone.utc)
             limit_count_statement = select(LimitWithDrawal).where(
                 LimitWithDrawal.account == account.id
             )
             result_count = self.session.exec(limit_count_statement)
             count = result_count.first()
+            if current_date.date != datetime.fromisoformat(f"{count.date_withdrawal}"):
+                count.date_withdrawal = current_date
+                self.session.add(count)
+                self.session.commit()
             if count.withdrawal_day_limit == 3:
                 return "You already have made three withdrawals today this is the limit daily!"
             account.balance -= value

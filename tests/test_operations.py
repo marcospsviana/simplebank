@@ -1,4 +1,9 @@
+from datetime import datetime, timezone
+
+from sqlmodel import select
+
 from database_operations import BaseOps, OperationsAccount
+from models import LimitWithDrawal
 from operations import do_deposit, do_withdrawal
 
 
@@ -54,3 +59,14 @@ def test_limit_withdrawal(account):
 def test_deposit_wrong_value(account):
     result = do_deposit(-60, account=f"{account.account_number}")
     assert result == "This value $ -60 is not allowed!"
+
+
+def test_withdraw_update_date(session, account):
+    current_date = datetime.now(timezone.utc)
+    limit_statement = select(LimitWithDrawal).where(
+        LimitWithDrawal.account == account.id
+    )
+    limit = session.exec(limit_statement)
+    limit_withdrawal = limit.first()
+    date_withdrawal = datetime.fromisoformat(f"{limit_withdrawal.date_withdrawal}")
+    assert date_withdrawal.date() == current_date.date()
