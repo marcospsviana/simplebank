@@ -143,8 +143,10 @@ class OperationsAccount:
     def get_extract(self, account):
         statement = select(Extract).where(Account.account_number == account)
         results = self.session.exec(statement)
-        extract = results.all()
-        return extract
+        list_results = list()
+        for r in results.all():
+            list_results.append(r.json())
+        return list_results
 
     def do_record_extract(self, account, value, type_operation):
         extract = Extract(
