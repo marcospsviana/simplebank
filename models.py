@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timezone
 from enum import Enum
 
@@ -44,6 +45,16 @@ class Extract(SQLModel, table=True):
     type_operation: str = Field(nullable=False)
     date_operation: datetime = Field(default=datetime.now(timezone.utc), nullable=False)
     value_operation: float = Field(nullable=False)
+
+    def json(self) -> json:
+        return {
+            "id": self.id,
+            "account": self.account,
+            "extract_number": self.extract_number,
+            "type_operation": self.type_operation,
+            "date_operation": self.date_operation,
+            "value_operation": self.value_operation,
+        }
 
 
 class LimitWithDrawal(SQLModel, table=True):

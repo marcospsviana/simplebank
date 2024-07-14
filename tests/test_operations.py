@@ -8,7 +8,6 @@ from operations import do_deposit, do_withdrawal
 
 
 def test_deposit(session, user, account):
-    print(f"ACCOUNT NUMBER {account.account_number}")
     do_deposit(1200, account=f"{account.account_number}")
     base_ops = BaseOps()
     account_user = base_ops.get_account(user.id)
