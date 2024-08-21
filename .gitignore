@@ -285,3 +285,6 @@ pyrightconfig.json
 
 # pyenv python version config
 .python-version
+
+# intellij idea
+.idea

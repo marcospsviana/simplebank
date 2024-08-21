@@ -1,3 +1,9 @@
+set-environment:
+    python -m venv .venv
+    source .venv/bin/activate
+    python -m pip install poetry
+    poetry install
+
 setup:
 	python models.models.py
 
