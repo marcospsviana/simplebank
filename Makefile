@@ -1,5 +1,5 @@
 setup:
-	python models.models.py
+	python models.py
 
 formater:
 	black .
@@ -9,4 +9,4 @@ check:
 	flake8 .
 
 test:
-	python -m pytest tests -vss --postgresql-host=localhost --postgresql-password=postgres --postgresql-user=postgres --cov=simplebank tests/
+	python -m pytest tests -vss 

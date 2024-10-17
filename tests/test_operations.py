@@ -8,24 +8,24 @@ from operations import do_deposit, do_withdrawal
 
 
 def test_deposit(session, user, account):
-    do_deposit(1200, account=f"{account.account_number}")
+    do_deposit(value=1200, account=f"{account.account_number}")
     base_ops = BaseOps()
     account_user = base_ops.get_account(user.id)
     assert account_user.balance == 1200.0
 
 
-def test_withdrawal(user, account):
-    do_withdrawal(600, account=f"{account.account_number}")
+def test_withdrawal(session, user, account):
+    do_withdrawal(value=600, account=f"{account.account_number}")
     base_ops = BaseOps()
     account_user = base_ops.get_account(user.id)
     assert account_user.balance == 600.0
 
 
 def test_withdrawal_over_balance(account):
-    result = do_withdrawal(6000, account=f"{account.account_number}")
+    result = do_withdrawal(value=6000, account=f"{account.account_number}")
     assert (
         result
-        == "Account doesn't have enough to withdrawal $ 6000.0, account balance: $ 600.0"
+        == f"Account doesn't have enough to withdrawal $ 6000.0, account balance: $ {account.balance}"
     )
 
 
@@ -45,9 +45,9 @@ def test_record_extract(account):
 
 
 def test_limit_withdrawal(account):
-    do_withdrawal(60, account=f"{account.account_number}")
-    do_withdrawal(60, account=f"{account.account_number}")
-    do_withdrawal(60, account=f"{account.account_number}")
+    for _ in range(9):
+        do_withdrawal(value=60, account=f"{account.account_number}")
+
     result = do_withdrawal(60, account=f"{account.account_number}")
     assert (
         result
@@ -56,7 +56,7 @@ def test_limit_withdrawal(account):
 
 
 def test_deposit_wrong_value(account):
-    result = do_deposit(-60, account=f"{account.account_number}")
+    result = do_deposit(value=-60, account=f"{account.account_number}")
     assert result == "This value $ -60 is not allowed!"
 
 

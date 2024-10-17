@@ -1,10 +1,24 @@
+import logging
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from psycopg2 import connect
+from psycopg import connect
 from sqlmodel import Session, select
 
+import config
+from log_system import log_transaction
 from models import Account, Extract, LimitWithDrawal, User, get_engine
+
+
+# def transaction(func):
+#
+#     def wraper(*args, **kwargs):
+#         result = func(*args, **kwargs)
+#
+#         logger.info(f"{datetime.now()}: {func.__name__.upper()}")
+#         return result
+#
+#     return wraper()
 
 
 def generate_account_number():
@@ -20,7 +34,9 @@ class BaseOps:
     def __init__(self) -> None:
         self.engine = get_engine()
         self.session = Session(self.engine)
-        self.conn = connect(dsn="postgresql://postgres:postgres@localhost/postgres")
+        self.conn = connect(
+            dbname="postgres", user="postgres", password="postgres", host="localhost"
+        )
         self.cursor = self.conn.cursor()
 
     def create_new_register_user(self, name, citzen_id):
@@ -32,13 +48,13 @@ class BaseOps:
 
     def get_user(self, name):
         statement = select(User).where(User.name == name)
-        results = self.session.exec(statement)
+        results = self.session.execute(statement)
         user = results.first()
         return user
 
     def update_user(self, name, new_name, nickname):
         statement = select(User).where(User.name == name)
-        results = self.session.exec(statement)
+        results = self.session.execute(statement)
         user = results.first()
         if new_name:
             user.name = new_name
@@ -53,10 +69,10 @@ class BaseOps:
     def create_new_register_account(self, account_user, type=None, balance=None):
         account_number = generate_account_number()
         statement = select(User).where(User.name == account_user)
-        results = self.session.exec(statement)
+        results = self.session.execute(statement)
         user = results.one()
         account_statement = select(Account).where(Account.account_user == user.id)
-        results = self.session.exec(account_statement)
+        results = self.session.execute(account_statement)
         account_found = results.first()
         if account_found:
             return f"Account for this costumer already exists, account number: {account_found.account_number}"
@@ -88,10 +104,21 @@ class BaseOps:
 
     def get_account(self, user):
         statement = select(Account).where(User.id == user)
-        results = self.session.exec(statement)
-        account = results.one()
-        self.session.flush(account)
+        results = self.session.execute(statement)
+        account = results.first()
+        # self.session.flush(account)
         return account
+
+    def get_all_account(self):
+        statement = select(Account)
+        results = self.session.execute(statement)
+        account = results.fetchall()
+        return account
+
+    def get_all_data(self):
+        statement = select(Account, User).where(User.id == Account.account_user)
+        result = self.session.execute(statement=statement)
+        return result.fetchall()
 
 
 class OperationsAccount:
@@ -99,11 +126,12 @@ class OperationsAccount:
         self.engine = get_engine()
         self.session = Session(self.engine)
 
+    @log_transaction
     def deposit(self, account, value):
         if float(value) < 0:
             return f"This value $ {value} is not allowed!"
         statement = select(Account).where(Account.account_number == account)
-        results = self.session.exec(statement)
+        results = self.session.execute(statement)
         account = results.one()
         account.balance += value
         self.session.add(account)
@@ -111,9 +139,10 @@ class OperationsAccount:
         self.session.flush(account)
         self.do_record_extract(account, value, "deposit")
 
+    @log_transaction
     def withdrawal(self, account, value):
         statement = select(Account).where(Account.account_number == account)
-        results = self.session.exec(statement)
+        results = self.session.execute(statement)
         account = results.first()
         if value > account.balance:
             return f"Account doesn't have enough to withdrawal $ {float(value)}, account balance: $ {account.balance}"
@@ -122,13 +151,13 @@ class OperationsAccount:
             limit_count_statement = select(LimitWithDrawal).where(
                 LimitWithDrawal.account == account.id
             )
-            result_count = self.session.exec(limit_count_statement)
+            result_count = self.session.execute(limit_count_statement)
             count = result_count.first()
             if current_date.date != datetime.fromisoformat(f"{count.date_withdrawal}"):
                 count.date_withdrawal = current_date
                 self.session.add(count)
                 self.session.commit()
-            if count.withdrawal_day_limit == 3:
+            if count.withdrawal_day_limit == config.DAY_LIMIT_TRANSACTION:
                 return "You already have made three withdrawals today this is the limit daily!"
             account.balance -= value
             self.session.add(account)
@@ -140,9 +169,10 @@ class OperationsAccount:
         self.do_record_extract(account, value, "withdrawal")
         return f"Withdrawal of value $ {float(value)} successful!"
 
+    @log_transaction
     def get_extract(self, account):
         statement = select(Extract).where(Account.account_number == account)
-        results = self.session.exec(statement)
+        results = self.session.execute(statement)
         list_results = list()
         for r in results.all():
             list_results.append(r.json())
@@ -159,3 +189,5 @@ class OperationsAccount:
         )
         self.session.add(extract)
         self.session.commit()
+
+    def register_transaction(self, user, type, value): ...

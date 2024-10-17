@@ -23,7 +23,6 @@ def user(session):
     results = session.exec(statement)
     user = results.one()
     yield user
-    session.delete(user)
 
 
 @pytest.fixture
@@ -44,4 +43,3 @@ def account(user, session):
     results = session.exec(statement)
     account = results.one()
     yield account
-    session.delete(account)
